@@ -24,6 +24,10 @@ export class PostListItemComponent implements OnInit {
     this.postsService.unlikePost(this.index);
   }
 
+  onDelete() {
+    this.postsService.deletePost(this.index);
+  }
+
   ngOnInit() {
   }
 

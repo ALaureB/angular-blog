@@ -2,6 +2,9 @@
                 'mb-3': true,
                 'list-group-item-success': postLikes > 0,
                 'list-group-item-danger' : postLikes < 0}">
+  <button type="button" class="close" aria-label="Close" (click)="onDelete()">
+    <span aria-hidden="true">&times;</span>
+  </button>
   <div class="row">
     <h4 class="col-lg-8">{{ postTitle }}</h4>
     <h6 class="col-lg-4 text-right">{{ postDate | date:'short' }}</h6>

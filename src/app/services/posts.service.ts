@@ -21,19 +21,21 @@ export class PostsService {
   likePost(i: number) {
     this.posts[i].loveIts++;
     this.emitPostsSubject();
-    console.log(this.posts[i].loveIts);
   }
 
   unlikePost(i: number) {
     this.posts[i].loveIts--;
     this.emitPostsSubject();
-    console.log(this.posts[i].loveIts);
   }
 
   addPost(post: Post) {
     this.posts.push(post);
     this.emitPostsSubject();
-    console.log(this.posts);
+  }
+
+  deletePost(i: number) {
+    this.posts.splice(i, 1);
+    this.emitPostsSubject();
   }
 
 }
