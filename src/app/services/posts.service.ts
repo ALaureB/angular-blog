@@ -30,4 +30,10 @@ export class PostsService {
     console.log(this.posts[i].loveIts);
   }
 
+  addPost(post: Post) {
+    this.posts.push(post);
+    this.emitPostsSubject();
+    console.log(this.posts);
+  }
+
 }
