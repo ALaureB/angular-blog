@@ -1,40 +1,69 @@
 import { Post } from '../models/Post.model';
 import { Subject } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
+@Injectable()
 export class PostsService {
 
+  posts: Post[] = [];
   postsSubject = new Subject<Post[]>();
 
-  private posts = [
-    // tslint:disable-next-line:max-line-length
-    new Post('Quare hoc quidem praeceptum', 'Quare hoc quidem praeceptum, cuiuscumque est, ad tollendam amicitiam valet; illud potius praecipiendum fuit, ut eam diligentiam adhiberemus in amicitiis comparandis, ut ne quando amare inciperemus eum, quem aliquando odisse possemus. Quin etiam si minus felices in diligendo fuissemus, ferendum id Scipio potius quam inimicitiarum tempus cogitandum putabat.', 4, Date.now()),
-    // tslint:disable-next-line:max-line-length
-    new Post('Quanta autem vis amicitiae sit', 'Quanta autem vis amicitiae sit, ex hoc intellegi maxime potest, quod ex infinita societate generis humani, quam conciliavit ipsa natura, ita contracta res est et adducta in angustum ut omnis caritas aut inter duos aut inter paucos iungeretur.', -2, Date.now()),
-    // tslint:disable-next-line:max-line-length
-    new Post('Abusus enim multitudine', 'Abusus enim multitudine hominum, quam tranquillis in rebus diutius rexit, ex agrestibus habitaculis urbes construxit multis opibus firmas et viribus, quarum ad praesens pleraeque licet Graecis nominibus appellentur, quae isdem ad arbitrium inposita sunt conditoris, primigenia tamen nomina non amittunt, quae eis Assyria lingua institutores veteres indiderunt.', 8, Date.now())
-  ];
+  constructor(private httpClient: HttpClient, private router: Router) {}
+
+  getPostsFromServer() {
+    this.httpClient
+      .get<Post[]>('https://angular-blog-be5d1.firebaseio.com/posts.json')
+      .subscribe(
+        (response) => {
+          this.posts = response;
+          this.emitPostsSubject();
+        },
+        (error) => {
+          console.log('Erreur ! : ' + error);
+        }
+      );
+  }
+
+  savePostsToServer() {
+    this.httpClient
+      .put('https://angular-blog-be5d1.firebaseio.com/posts.json', this.posts)
+      .subscribe(
+        () => {
+          console.log('Saving over !');
+        },
+        (error) => {
+          console.log('Error ! : ' + error);
+        }
+      );
+  }
 
   emitPostsSubject() {
-    this.postsSubject.next(this.posts.slice());
+    this.postsSubject.next(this.posts);
   }
 
   likePost(i: number) {
     this.posts[i].loveIts++;
+    this.savePostsToServer();
     this.emitPostsSubject();
   }
 
   unlikePost(i: number) {
     this.posts[i].loveIts--;
+    this.savePostsToServer();
     this.emitPostsSubject();
   }
 
   addPost(post: Post) {
     this.posts.push(post);
+    this.savePostsToServer();
     this.emitPostsSubject();
   }
 
   deletePost(i: number) {
     this.posts.splice(i, 1);
+    this.savePostsToServer();
     this.emitPostsSubject();
   }
 
